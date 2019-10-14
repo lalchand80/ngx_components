@@ -1,0 +1,98 @@
+<div class="row no-margin justify-content-md-center" style="position: relative;">
+    <div class="card col-filter-container" *ngIf="showFilterBox">
+      <div class="filter-card-header"> <span class="filter-title">Filter</span> <button
+          (click)="applyFilter()">Apply</button> </div>
+      <ul class="list-group list-group-flush">
+        <li class="column-filter-item"> <input type="checkbox" id="0" name="radio-group" [checked]="selectAllFlag"
+            (change)="changeAllSelection($event)"> <label for="0"></label> <span>Select All</span></li>
+        <li class="column-filter-item" *ngFor="let data of tableColsDropDown;let i = index;"> <input type="checkbox"
+            id="rdb{{i}}" name="radio-group" [checked]="data.selected"
+            (change)="changeColSelection(data.headerName, $event)"> <label for="rdb{{i}}"></label>
+          <span>{{data.headerName}}</span></li>
+      </ul>
+    </div>
+    <div *ngIf="colFilter" class="filter-button" (click)="showFilterContainer()"> <span>Filter</span> </div>
+    <div *ngIf="colSearch" class="colSearch-button" (click)="toggleSearchFilter()"> <span>Column Search</span> </div>
+    <div class="col-12 ">
+      <div class="form-group row" *ngIf="tableData" style="margin: 0px; margin-bottom:10px; ">
+        <div class=" col-2 no-padding" style="align-items: center;display: flex;"> <span style="vertical-align: middle;">Total Items: 
+            {{tableDataBkp.length}}</span> </div>
+        <div *ngIf="gblSearch" class="offset-lg-6 col-4">
+          <div class="input-group no-padding">
+            <div class="input-group-prepend"> <span class="input-group-text" id="basic-addon1">Global Search</span>
+            </div> <input type="text" [(ngModel)]="gblSearchText" (ngModelChange)="startSearch(gblSearchText)"
+              class="form-control" placeholder="Enter text to search..." aria-describedby="basic-addon1" />
+          </div>
+        </div>
+      </div>
+      <div class="card" style="overflow: auto;">
+        <div class="row no-margin tableGridHeader">
+          <div class="col-121 zen-row-header">
+            <div *ngFor="let data of tableCols;let i = index;" class="zen-cell"
+              [ngStyle]="{'width':'calc('+data.width+'px + 10px)'}" style="left: 0;">
+              <div (click)="sorting ? sortData(data) : ''" class="tbl_column_name"> <span
+                  [ngStyle]="{'width':'calc('+data.width+'px - 15px)'}" data-toggle="tooltip" data-placement="bottom" title="{{data.headerName}}">{{data.headerName}}</span> <i *ngIf="sorting"
+                  class="sortingIcon"
+                  [ngClass]="data.sortDirection === 'asc' ? 'fa fa-sort-amount-asc ' : 'fa fa-sort-amount-desc'"></i>
+              </div>
+              <div *ngIf="searchOnOff"> <input type="text" [(ngModel)]="data.searchText"
+                  (ngModelChange)="startSearch(gblSearchText)" class="form-control"
+                  placeholder="Search by {{data.headerName}}" style="font-size: 11px;" />
+                <!-- <i class="fa fa-times-circle" (click)="startSearch(searchText)" style="margin-left: -5px;"></i> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <app-loading-spinner [loadingType]="'bar'" *ngIf="!tableData"> </app-loading-spinner> -->
+        <ng-container *ngIf="tableData">
+          <div class="tableGridBody">
+            <div class="row no-margin" *ngFor="let data of tableData | paginate: config; let i=index">
+              <div *ngIf="!data" class="noMatchFound">"No record matches"</div>
+              <div class="col-12 zen-row firstLevel" *ngIf="data">
+                <div class="zen-cell" *ngFor="let col of tableCols; let colIndex = index;first as isFirst"
+                  [ngStyle]="{'width':'calc('+col.width+'px + 10px)'}" style="left: 0;" [class.first]="isFirst"> <i
+                    class="more-less glyphicon glyphicon-plus fa" *ngIf="colIndex == 0"
+                    [ngClass]="{'fa-plus': data.children, 'fa-minus': data.active }" (click)="showMinorData(i)"></i> <span
+                    data-toggle="tooltip" title={{data[col.field]}}>{{ data[col.field]}}</span> </div>
+              </div>
+              <ng-container *ngIf="data.active">
+                <div class="row no-margin" *ngFor="let subData of data.children ;let j=index"
+                  style="background: rgba(50, 185, 226, 0.3215686274509804)">
+                  <div class="col-12 zen-row ">
+                    <div class="zen-cell secondLevel"
+                      *ngFor="let col of tableCols; let colIndex2 = index;first as isFirst"
+                      [ngStyle]="{'width':'calc('+col.width+'px + 10px)'}" style="left: 0;" [class.first]="isFirst"> <i
+                        class="more-less glyphicon glyphicon-plus fa" *ngIf="colIndex2 == 0"
+                        [ngClass]="{'fa-plus': subData.children, 'fa-minus': subData.active }"
+                        (click)="showSubMinorData(i,j)"></i> <span data-toggle="tooltip"
+                        title={{subData[col.field]}}>{{subData[col.field]}}</span> </div>
+                  </div>
+                  <ng-container *ngIf="subData.active">
+                    <div class="row no-margin" *ngFor="let record of subData.children"
+                      style="background: rgba(197, 206, 224, 0.5607843137254902); color: #595454;">
+                      <div class="col-12 zen-row ">
+                        <div class="zen-cell thirdLevel" *ngFor="let col of tableCols; let colIndex3 = index;"
+                          [ngStyle]="{'width':'calc('+col.width+'px + 10px)'}" style="left: 0;"> <i
+                            class="more-less glyphicon glyphicon-plus fa" *ngIf="colIndex3 == 0"
+                            [ngClass]="{'fa-plus': record.children, 'fa-minus': record.active }"></i>
+                          <span>{{record[col.field]}}</span> </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="paginationFlag" class="col-12" style="margin-top: 15px;">
+        <div class="col-8" style="float: right;"> Show <select [(ngModel)]="config.itemsPerPage">
+            <option *ngFor="let itm of paging" [value]="itm">{{itm}}</option>
+          </select> items | Displaying {{getPageDetails()}} items </div>
+        <div class="col-4">
+          <pagination-controls [previousLabel]="" [nextLabel]="" [directionLinks]=true
+            (pageChange)="onPageChange($event)"> </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
