@@ -1,6 +1,25 @@
 {
   "name": "ngx-cust-table",
   "version": "0.0.1",
+  "description": "This repository is an Angular component library which holds custom table component with different customization like add/remove column filter, global search, column wise search, sort and row accordian needed for angular application development",
+  "keywords": [
+    "grid",
+    "datatable",
+    "angular custom table",
+    "editable table",
+    "custom table",
+    "filter, search table"
+  ],
+  "author": "Lalchand Mahajan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lalchand80/ngx_components.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lalchand80/ngx_components/issues"
+  },
+  "homepage": "https://github.com/lalchand80/ngx_components",
   "peerDependencies": {
     "@angular/common": "^8.2.9",
     "@angular/core": "^8.2.9",
