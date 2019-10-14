@@ -1,6 +1,6 @@
 {
   "name": "ngx-cust-table",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This repository is an Angular component library which holds custom table component with different customization like add/remove column filter, global search, column wise search, sort and row accordian needed for angular application development",
   "keywords": [
     "grid",
